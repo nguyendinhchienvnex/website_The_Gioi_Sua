@@ -1,0 +1,65 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block change_account %}
+<style>
+  .change-card {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    background: #fff;
+  }
+  .change-title {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #2c3e50;
+  }
+  .btn-change {
+    display: inline-block;
+    width: 100%;
+    padding: 12px;
+    background: #28a745;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    transition: all 0.3s;
+  }
+  .btn-change:hover {
+    background: #218838;
+  }
+  .form-label {
+    font-weight: 500;
+  }
+</style>
+
+<div class="change-card">
+  <h2 class="change-title">Đổi mật khẩu</h2>
+
+  <form method="post" action="{% url 'change_account' %}">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label class="form-label"><i class="fas fa-lock me-2"></i>Mật khẩu mới</label>
+      {{ form.password }}
+      {% if form.password.errors %}
+      <span class="text-danger small">{{ form.password.errors|join:", " }}</span>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label"><i class="fas fa-lock me-2"></i>Xác nhận mật khẩu</label>
+      {{ form.password_confirmation }}
+      {% if form.password_confirmation.errors %}
+      <span class="text-danger small">{{ form.password_confirmation.errors|join:", " }}</span>
+      {% endif %}
+    </div>
+
+    <button type="submit" class="btn-change">Cập nhật mật khẩu</button>
+  </form>
+</div>
+{% endblock change_account %}

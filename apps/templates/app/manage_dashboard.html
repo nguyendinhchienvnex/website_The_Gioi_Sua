@@ -1,0 +1,133 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% load humanize %}
+{% block manage_dashboard %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">📊 Dashboard Doanh Thu</h2>
+
+    <!-- Tổng quan -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center shadow p-3">
+                <h5>Tổng Doanh Thu</h5>
+                <h3 class="text-success">{{ total_revenue|floatformat:0|intcomma }} ₫</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center shadow p-3">
+                <h5>Tổng Đơn Hàng</h5>
+                <h3 class="text-primary">{{ total_orders }}</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center shadow p-3">
+                <h5>Số Khách Hàng</h5>
+                <h3 class="text-warning">{{ total_customers }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Biểu đồ doanh thu hàng tháng -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <h5 class="card-title">📈 Doanh thu theo tháng</h5>
+            <canvas id="monthlyRevenueChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Doanh thu từng khách hàng -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <h5 class="card-title">👤 Doanh thu theo khách hàng</h5>
+            <canvas id="customerRevenueChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Top sản phẩm bán chạy -->
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title">📦 Top sản phẩm bán chạy</h5>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th>Số lượng</th>
+                                <th>Doanh thu</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in top_products %}
+                            <tr>
+                                <td>{{ p.name }}</td>
+                                <td>{{ p.total_quantity }}</td>
+                                <td>{{ p.total_revenue|floatformat:0|intcomma }} ₫</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pie chart -->
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title">Tỷ lệ doanh thu theo sản phẩm</h5>
+                    <canvas id="productPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Biểu đồ doanh thu hàng tháng
+    const monthlyRevenueCtx = document.getElementById('monthlyRevenueChart').getContext('2d');
+    new Chart(monthlyRevenueCtx, {
+        type: 'line',
+        data: {
+            labels: {{ months|safe }},
+            datasets: [{
+                label: 'Doanh thu (₫)',
+                data: {{ monthly_revenue|safe }},
+                borderColor: '#4CAF50',
+                backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                fill: true,
+                tension: 0.4
+            }]
+        }
+    });
+
+    // Biểu đồ doanh thu từng khách hàng
+    const customerRevenueCtx = document.getElementById('customerRevenueChart').getContext('2d');
+    new Chart(customerRevenueCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ customer_names|safe }},
+            datasets: [{
+                label: 'Doanh thu (₫)',
+                data: {{ customer_revenue|safe }},
+                backgroundColor: '#2196F3'
+            }]
+        }
+    });
+
+    // Biểu đồ pie sản phẩm
+    const productPieCtx = document.getElementById('productPieChart').getContext('2d');
+    new Chart(productPieCtx, {
+        type: 'pie',
+        data: {
+            labels: {{ product_names|safe }},
+            datasets: [{
+                data: {{ product_revenue|safe }},
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#FF9800']
+            }]
+        }
+    });
+</script>
+{% endblock %}

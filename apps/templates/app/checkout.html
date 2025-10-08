@@ -1,0 +1,306 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content_checkout %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+    .btn-outline-dark  {
+        border: 2px solid red;
+        padding: 10px 20px;
+        color: red;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .btn-outline-dark:hover { background-color: red; color: white; }
+    #btnDatHang{
+        border: 2px solid red;
+        padding: 10px 20px;
+        color: red;
+        border-radius: 5px;
+        background-color:white;
+        transition: 0.3s;
+    }
+    #btnDatHang:hover{ border: 2px solid black; background-color: red; color:white; }
+    .overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background-color: rgba(0, 0, 0, 0.6); display: none;
+        justify-content: center; align-items: center; z-index: 9999;
+    }
+    .centered-container {
+        background-color: #fff; padding: 20px; border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    .checkmark-icon { color: #28a745; font-size: 50px; margin: 0 auto; display: block; }
+    .btn-ok {
+        background-color: red; border: none; color: #fff; cursor: pointer;
+        font-size: 15px; padding: 10px 20px; border-radius: 5px; margin-top: 20px;
+    }
+    .btn-ok:hover { background-color: #218838; }
+    .confirmation-box {
+        position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        background-color: #fff; padding: 20px; border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); z-index: 1000;
+        max-width: 300px; text-align: center;
+    }
+    .confirmation-box button { margin-top: 15px; padding: 10px 20px;
+        border: none; border-radius: 5px; cursor: pointer;
+        font-size: 16px; font-weight: bold; }
+    #cancelButton { background-color: #e74c3c; color: #fff; }
+    #confirmButton { background-color: #2ecc71; color: #fff; }
+    .confirmation-box button:hover { opacity: 0.9; }
+</style>
+
+<main role="main">
+    <div class="container mt-4">
+        <form class="needs-validation" method="post" action="#">
+            {% csrf_token %}
+            <div class="py-5 text-center">
+                <i class="fa fa-credit-card fa-4x"></i>
+                <h2>Thanh toán</h2>
+                <p class="lead">Vui lòng kiểm tra thông tin khách hàng, giỏ hàng trước khi đặt.</p>
+            </div>
+            <a class="btn btn-outline-dark" href="{% url 'cart' %}">&#x2190; Giỏ Hàng</a>
+
+            <div class="row">
+                <!-- Giỏ hàng -->
+                <div class="col-md-5 order-md-2 mb-4">
+                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted" style="font-weight: bold;">Giỏ hàng</span>
+                        <span class="badge badge-secondary badge-pill">{{ order.get_cart_items }}</span>
+                    </h4>
+                    <ul class="list-group mb-3">
+                        <div class="box-element">
+                            <div class="cart-row">
+                                <div style="flex:1"></div>
+                                <div style="flex:2"><strong>Tên sản phẩm</strong></div>
+                                <div style="flex:1"><strong>Giá</strong></div>
+                                <div style="flex:1"><strong>Số lượng</strong></div>
+                            </div>
+                            {% for item in items %}
+                            <div class="cart-row">
+                                <div style="flex:1"><img class="row-image" src="{{ item.product.ImageURL }}"></div>
+                                <div style="flex:2"><p>{{ item.product.name }}</p></div>
+                                <div style="flex:1"><p>{{ item.product.price|floatformat:0|intcomma }} ₫</p></div>
+                                <div style="flex:1"><p>{{ item.quantity }}</p></div>
+                            </div>
+                            {% endfor %}
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Tổng hàng</span><strong>{{ order.get_cart_items }}</strong>
+                                <span>Tổng thành tiền</span><strong>{{ order.get_cart_total|floatformat:0|intcomma }} ₫</strong>
+                            </li>
+                        </div>
+                    </ul>
+                </div>
+
+                <!-- Thông tin khách hàng -->
+    <!-- Thông tin khách hàng -->
+            <div class="col-md-7 order-md-1">
+                <h4 class="mb-3">Thông tin khách hàng</h4>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label>Họ tên</label>
+                        <input required class="form-control" type="text" name="name">
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+                        <label>Tỉnh / Thành phố</label>
+                        <select id="province" class="form-control" required>
+                            <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+                        <label>Quận / Huyện</label>
+                        <select id="district" class="form-control" required disabled>
+                            <option value="">-- Chọn Quận/Huyện --</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+                        <label>Phường / Xã</label>
+                        <select id="ward" class="form-control" required disabled>
+                            <option value="">-- Chọn Phường/Xã --</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+                        <label>Địa chỉ chi tiết (Số nhà, đường...)</label>
+                        <input required class="form-control" type="text" id="addressDetail" name="address">
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+                        <label>Điện thoại</label>
+                        <input required class="form-control" type="text" name="phone">
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label>Email</label>
+                        <input required class="form-control" type="text" name="email">
+                    </div>
+                </div>
+
+                <h4 class="mb-3">Hình thức thanh toán</h4>
+                <div class="d-block my-3">
+                    <div class="custom-control custom-radio">
+                        <input id="httt-1" name="httt_ma" type="radio" class="custom-control-input" required value="1">
+                        <label class="custom-control-label" for="httt-1">Thanh toán khi nhận hàng</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input id="httt-2" name="httt_ma" type="radio" class="custom-control-input" required value="2">
+                        <label class="custom-control-label" for="httt-2">Thanh toán bằng VnPay</label>
+                    </div>
+                </div>
+
+                <hr class="mb-4">
+                <button class="btn btn-primary btn-lg btn-block" id="btnDatHang">&#x2190; Đặt hàng</button>
+            </div>
+        </div>
+        </form>
+        </div>
+        </main>
+
+        <!-- ========== JS Load địa chỉ ========== -->
+<script>
+$(document).ready(function() {
+    // Lấy danh sách tỉnh thành từ API công khai
+    $.get("https://provinces.open-api.vn/api/?depth=1", function(data) {
+        data.forEach(p => {
+            $("#province").append(`<option value="${p.code}">${p.name}</option>`);
+        });
+    });
+
+    // Khi chọn tỉnh
+    $("#province").on("change", function() {
+        const provinceCode = $(this).val();
+        $("#district").prop("disabled", true).html('<option value="">-- Chọn Quận/Huyện --</option>');
+        $("#ward").prop("disabled", true).html('<option value="">-- Chọn Phường/Xã --</option>');
+
+        if (provinceCode) {
+            $.get(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`, function(data) {
+                data.districts.forEach(d => {
+                    $("#district").append(`<option value="${d.code}">${d.name}</option>`);
+                });
+                $("#district").prop("disabled", false);
+            });
+        }
+    });
+
+    // Khi chọn huyện
+    $("#district").on("change", function() {
+        const districtCode = $(this).val();
+        $("#ward").prop("disabled", true).html('<option value="">-- Chọn Phường/Xã --</option>');
+
+        if (districtCode) {
+            $.get(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`, function(data) {
+                data.wards.forEach(w => {
+                    $("#ward").append(`<option value="${w.name}">${w.name}</option>`);
+                });
+                $("#ward").prop("disabled", false);
+            });
+        }
+    });
+});
+</script>
+<!-- Xác nhận -->
+<div class="confirmation-box" style="display:none;">
+    <p>Bạn có muốn đặt hàng không?</p>
+    <button id="cancelButton">Hủy</button>
+    <button id="confirmButton">Đồng ý</button>
+</div>
+
+<!-- Modal OTP -->
+<div id="otpModal" class="overlay">
+    <div class="centered-container">
+        <h5>Nhập mã OTP</h5>
+        <input type="text" id="otpInput" class="form-control" placeholder="Nhập OTP...">
+        <button class="btn btn-ok" id="verifyOtpBtn">Xác nhận</button>
+        <button class="btn btn-ok" style="background-color:gray;" id="closeOtpBtn">Hủy</button>
+    </div>
+</div>
+
+<!-- Thành công -->
+<div class="overlay" id="successOverlay">
+    <div class="centered-container">
+        <i class="fas fa-check-circle checkmark-icon"></i>
+        <p class="success-message">Đặt hàng thành công! Cảm ơn bạn đã mua hàng.</p>
+        <button class="btn btn-ok" onclick="goHome()">OK</button>
+    </div>
+</div>
+
+<script>
+document.getElementById("btnDatHang").addEventListener("click", function(event) {
+    event.preventDefault();
+    let name = document.querySelector('input[name="name"]').value;
+    let address = document.querySelector('input[name="address"]').value;
+    let phone = document.querySelector('input[name="phone"]').value;
+    let email = document.querySelector('input[name="email"]').value;
+
+    if (name && address && phone && email) {
+        let paymentMethod = document.querySelector('input[name="httt_ma"]:checked').value;
+        if (paymentMethod === '2') {
+            window.location.href = '{% url "payment" %}';
+        } else {
+            document.querySelector('.confirmation-box').style.display = "block";
+        }
+    } else {
+        alert("Vui lòng nhập đầy đủ thông tin.");
+    }
+});
+
+// Hủy xác nhận
+document.getElementById("cancelButton").addEventListener("click", function() {
+    document.querySelector(".confirmation-box").style.display = "none";
+});
+
+// Đồng ý đặt hàng (COD)
+document.getElementById("confirmButton").addEventListener("click", function() {
+    let email = document.querySelector('input[name="email"]').value;
+    fetch("{% url 'send_otp' %}", {
+        method: "POST",
+        headers: { "X-CSRFToken": "{{ csrf_token }}", "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            document.querySelector(".confirmation-box").style.display = "none";
+            document.getElementById("otpModal").style.display = "flex";
+        } else { alert("Lỗi gửi OTP: " + data.error); }
+    });
+});
+
+// Xác minh OTP
+document.getElementById("verifyOtpBtn").addEventListener("click", function() {
+    let otp = document.getElementById("otpInput").value;
+    fetch("{% url 'place_order' %}", {
+        method: "POST",
+        headers: { "X-CSRFToken": "{{ csrf_token }}", "Content-Type": "application/json" },
+        body: JSON.stringify({ otp: otp })
+    })
+    .then(res => res.json())
+    .then(result => {
+        if (result.success) {
+            document.getElementById("otpModal").style.display = "none";
+            showSuccessMessage();
+        } else {
+            alert("Lỗi: " + (result.error || "OTP sai"));
+        }
+    });
+});
+
+// Hủy OTP
+document.getElementById("closeOtpBtn").addEventListener("click", function() {
+    document.getElementById("otpModal").style.display = "none";
+});
+
+function showSuccessMessage() {
+    document.getElementById("successOverlay").style.display = "flex";
+}
+function goHome() {
+    window.location.href = "{% url 'home' %}";
+}
+</script>
+{% endblock content_checkout %}

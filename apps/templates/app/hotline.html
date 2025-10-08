@@ -1,0 +1,118 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block hotline %}
+<style>
+  .contact-section {
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #f7f7f7, #ffffff);
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  }
+  .contact-title {
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #32a867;
+  }
+  .contact-info p {
+    font-size: 18px;
+    margin: 8px 0;
+  }
+  .call-btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    border: 2px solid #f7462e;
+    border-radius: 8px;
+    color: #f7462e;
+    background: #fff;
+    text-decoration: none;
+    transition: 0.3s ease;
+  }
+  .call-btn:hover {
+    background: #f7462e;
+    color: #fff;
+    transform: translateY(-3px);
+  }
+  .map-box iframe {
+    border-radius: 15px;
+    width: 100%;
+    height: 350px;
+  }
+  .support-box {
+    text-align: center;
+    background: #32a867;
+    color: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    margin-top: 40px;
+    transition: 0.3s ease;
+  }
+  .support-box:hover {
+    background: #12d32f;
+    transform: translateY(-5px);
+  }
+  .support-box img {
+    width: 80px;
+    margin-bottom: 15px;
+  }
+  .support-box h5 {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+  .chat-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #fff;
+    color: #32a867;
+    border-radius: 6px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s ease;
+  }
+  .chat-btn:hover {
+    background: #011c3a;
+    color: #fff;
+  }
+
+</style>
+
+<div class="container contact-section">
+  <h2 class="contact-title">📞 Thông tin liên hệ</h2>
+  <div class="row">
+    <div class="col-lg-6 col-md-12 contact-info">
+      <p><strong>🏪 Tên cửa hàng:</strong> THẾ GIỚI SỮA</p>
+      <p><strong>☎ Hotline hỗ trợ:</strong> 0983 245 452 245</p>
+      <p><strong>🕒 Giờ làm việc:</strong> Thứ 2 - Thứ 6, 8:00 - 17:00</p>
+      <p><strong>📍 Địa chỉ:</strong> Quận Tân Bình, TP. Hồ Chí Minh</p>
+      <a href="tel:0365454643" class="call-btn">📲 Gọi ngay</a>
+    </div>
+    <div class="col-lg-6 col-md-12 map-box">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d793091.6000459787!2d106.03566945039915!3d10.75544596140221!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317529292e8d3dd1%3A0xf15f5aad773c112b!2zVGjDoG5oIHBo4buRIEjhu5MgQ2jDrSBNaW5oLCBI4buTIENow60gTWluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1735012583419!5m2!1svi!2s"
+        style="border:0;" allowfullscreen="" loading="lazy">
+      </iframe>
+    </div>
+  </div>
+
+  <div class="support-box">
+    <img src="{% static 'app/images/banner/dienthoai.png' %}" alt="Hỗ trợ">
+    <h5>Bạn cần tư vấn thêm?</h5>
+    <p class="fs-5">Hãy liên hệ ngay với đội ngũ chuyên viên của chúng tôi</p>
+    <a href="javascript:void(0);" class="chat-btn" onclick="openPrenyBot()">💬 Nhắn tin ngay</a>
+  </div>
+
+  <script>
+  function openPrenyBot() {
+    // Bot Preny tạo 1 iframe/button, thường có attribute [data-preny-bot-id]
+    const botButton = document.querySelector('[data-preny-bot-id]');
+    if (botButton) {
+      botButton.click(); // Kích hoạt bot
+    } else {
+      alert("Chatbot chưa load xong, vui lòng đợi 1 chút!");
+    }
+  }
+</script>
+</div>
+{% endblock hotline %}

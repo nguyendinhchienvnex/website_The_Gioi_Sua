@@ -1,0 +1,133 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block profile %}
+<style>
+  .profile-card {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    background: #fff;
+  }
+  .profile-title {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #2c3e50;
+  }
+  .image-container {
+    width: 160px;
+    height: 160px;
+    overflow: hidden;
+    border-radius: 50%;
+    margin: 0 auto 15px auto;
+    border: 3px solid #ccc;
+  }
+  #preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  #upload-btn {
+    display: inline-block;
+    padding: 8px 15px;
+    border: 2px solid #007bff;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #fff;
+    color: #007bff;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+  #upload-btn:hover {
+    background: #007bff;
+    color: #fff;
+  }
+  input[type="file"] {
+    display: none;
+  }
+  .call_change {
+    display: inline-block;
+    margin-left: 15px;
+    border: 2px solid red;
+    padding: 10px 20px;
+    color: red;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: all 0.3s;
+    font-weight: bold;
+  }
+  .call_change:hover {
+    background-color: red;
+    color: white;
+  }
+</style>
+
+<div class="profile-card">
+  <h2 class="profile-title">Thông Tin Cá Nhân</h2>
+
+  <form class="row g-3" method="POST">
+    {% csrf_token %}
+    <div class="col-md-6">
+        <label class="form-label"><i class="fas fa-user me-2"></i>Tài khoản</label>
+        <input type="text" class="form-control" value="{{ user_info.username }}" readonly>
+
+        <label class="form-label mt-3"><i class="fas fa-lock me-2"></i>Mật khẩu</label>
+        <input type="password" class="form-control" value="********" readonly>
+
+        <label class="form-label mt-3"><i class="fas fa-envelope me-2"></i>Email</label>
+        <input type="email" class="form-control" value="{{ user_info.email }}" readonly>
+
+        <label class="form-label mt-3"><i class="fas fa-phone me-2"></i>Số điện thoại</label>
+        <input type="text" class="form-control" id="inputPhone" name="phone"
+               value="{{ user_info.phone|default:'' }}" placeholder="Nhập số điện thoại">
+
+        <label class="form-label mt-3"><i class="fas fa-map-marker-alt me-2"></i>Địa chỉ</label>
+        <input type="text" class="form-control" id="inputAddress" name="address"
+               value="{{ user_info.address|default:'' }}" placeholder="Nhập địa chỉ của bạn">
+    </div>
+
+    <div class="col-md-6 text-center">
+        <div class="image-container">
+            <img id="preview-image" src="placeholder-image.jpg">
+        </div>
+        <label for="file-input" id="upload-btn">Chọn ảnh</label>
+        <input type="file" id="file-input" accept="image/*">
+    </div>
+
+    <div class="col-12 text-center mt-4">
+        <button type="submit" class="btn btn-success px-4">Cập nhật thông tin</button>
+        <a href="{% url 'change_account' %}" class="call_change">&#x2190; Đổi mật khẩu</a>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Lấy ảnh từ sessionStorage nếu có
+  const storedImage = sessionStorage.getItem('selectedImage');
+  if (storedImage) {
+    document.getElementById('preview-image').src = storedImage;
+  }
+
+  document.getElementById('file-input').addEventListener('change', function(event) {
+    const fileInput = event.target;
+    const previewImage = document.getElementById('preview-image');
+    const file = fileInput.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        previewImage.src = e.target.result;
+        sessionStorage.setItem('selectedImage', e.target.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      previewImage.src = 'placeholder-image.jpg';
+      sessionStorage.removeItem('selectedImage');
+    }
+  });
+</script>
+{% endblock profile %}

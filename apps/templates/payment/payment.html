@@ -1,0 +1,97 @@
+{% extends "payment/base_layout.html" %}
+{% block content %}
+
+<h3>{{ title }}</h3>
+<div class="table-responsive">
+    <form action="{% url 'payment' %}" id="create_form" method="post">
+        <div class="form-group">
+            <label for="language">Loại hàng hóa </label>
+            <select name="order_type" id="order_type" class="form-control">
+                <option value="billpayment">Thanh toán hóa đơn</option>
+                <option value="topup">Nạp tiền điện thoại</option>
+                <option value="fashion">Thời trang</option>
+                <option value="other">Khác - Xem thêm tại VNPAY</option>
+            </select>
+        </div>
+
+        <!-- ✅ Mã hóa đơn lấy từ DB (order.id) -->
+        <div class="form-group">
+            <label for="order_id">Mã hóa đơn</label>
+            <input class="form-control" id="order_id"
+                   name="order_id" type="text" value="{{ order_id }}" readonly style="background-color: white;"/>
+        </div>
+
+        <div class="form-group">
+            <label for="amount">Số tiền</label>
+            <input class="form-control" id="amount" name="amount" type="number" value="10000"
+                   style="background-color: white;">
+        </div>
+
+        <!-- JavaScript để cập nhật tổng giá từ giỏ hàng -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                fetch('http://127.0.0.1:8000/userId_api')
+                    .then(response => response.json())
+                    .then(data => {
+                        const userId = data.id;
+                        return fetch(`/cart_api/${userId}/`);
+                    })
+                    .then(response => response.json())
+                    .then(cartData => {
+                        const totalPrice = cartData.total_price_all;
+                        const totalPriceWithMultiplier = totalPrice;
+                        document.getElementById('amount').value = totalPriceWithMultiplier;
+                    })
+                    .catch(error => console.error('Error fetching cart total:', error));
+            });
+        </script>
+
+        <div class="form-group">
+            <label for="order_desc">Nội dung thanh toán</label>
+            <textarea class="form-control" cols="20" id="order_desc" name="order_desc" rows="2" readonly
+                      style="background-color: white;">Thanh toan don hang thoi gian: {% now "Y-m-d H:i:s" %}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="bank_code">Ngân hàng</label>
+            <select name="bank_code" id="bank_code" class="form-control">
+                <option value="">Không chọn</option>
+                <option value="NCB">Ngân hàng NCB</option>
+                <option value="AGRIBANK">Ngân hàng Agribank</option>
+                <option value="SCB">Ngân hàng SCB</option>
+                <option value="SACOMBANK">Ngân hàng SacomBank</option>
+                <option value="EXIMBANK">Ngân hàng EximBank</option>
+                <option value="MSBANK">Ngân hàng MSBANK</option>
+                <option value="NAMABANK">Ngân hàng NamABank</option>
+                <option value="VNMART">Ví điện tử VnMart</option>
+                <option value="VIETINBANK">Ngân hàng Vietinbank</option>
+                <option value="VIETCOMBANK">Ngân hàng VCB</option>
+                <option value="HDBANK">Ngân hàng HDBank</option>
+                <option value="DONGABANK">Ngân hàng Đông Á</option>
+                <option value="TPBANK">Ngân hàng TPBank</option>
+                <option value="OJB">Ngân hàng OceanBank</option>
+                <option value="BIDV">Ngân hàng BIDV</option>
+                <option value="TECHCOMBANK">Ngân hàng Techcombank</option>
+                <option value="VPBANK">Ngân hàng VPBank</option>
+                <option value="MBBANK">Ngân hàng MBBank</option>
+                <option value="ACB">Ngân hàng ACB</option>
+                <option value="OCB">Ngân hàng OCB</option>
+                <option value="IVB">Ngân hàng IVB</option>
+                <option value="VISA">Thanh toán qua VISA/MASTER</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="language">Ngôn ngữ</label>
+            <select name="language" id="language" class="form-control">
+                <option value="vn">Tiếng Việt</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-default">Thanh toán Redirect</button>
+        {% csrf_token %}
+        <div class="form-group"></div>
+    </form>
+</div>
+{% endblock %}

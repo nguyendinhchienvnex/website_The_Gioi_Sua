@@ -1,0 +1,136 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block category %}
+<style>
+    .product-card {
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        padding: 15px;
+        margin-bottom: 25px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-align: center;
+        position: relative;
+    }
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    .thubnail {
+        border-radius: 12px;
+        transition: transform 0.3s ease;
+        max-width: 100%;
+        max-height: 200px;
+        object-fit: cover;
+        object-position: center;
+    }
+    .thubnail:hover {
+        transform: scale(1.05);
+    }
+    .product-name {
+        font-size: 16px;
+        font-weight: 600;
+        margin-top: 12px;
+        color: #333;
+    }
+    .product-price {
+        font-size: 18px;
+        font-weight: bold;
+        color: #e63946;
+        display: block;
+        margin: 8px 0 5px 0;
+    }
+    .product-old-price {
+        font-size: 14px;
+        color: #888;
+        text-decoration: line-through;
+        margin-right: 8px;
+    }
+    .flash-sale {
+        display: inline-block;
+        background: linear-gradient(45deg, #ff512f, #dd2476);
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 4px 12px;
+        border-radius: 15px;
+        margin-top: 5px;
+        animation: flash 1s infinite alternate;
+    }
+    @keyframes flash {
+        from { opacity: 1; transform: scale(1);}
+        to { opacity: 0.7; transform: scale(1.1);}
+    }
+    .btn-custom {
+        border-radius: 25px;
+        font-size: 14px;
+        padding: 6px 15px;
+        transition: 0.3s;
+        margin: 3px;
+    }
+    .btn-custom:hover {
+        transform: scale(1.05);
+    }
+    .action-buttons {
+        margin-top: 12px;
+    }
+</style>
+
+<br/>
+<h5 class="sua-cho-nguoi-gia" style="color: red;">{{active_category}}</h5>
+
+<div class="row" style="width:100%">
+    {% for product in products %}
+    <div class="col-lg-3 col-md-4 col-sm-6">
+        <div class="product-card">
+            <img class="thubnail" src="{{product.ImageURL}}" height="200">
+            <div class="product-info">
+
+                <!-- Tên -->
+                <div class="product-name">{{product.name}}</div>
+
+                  <!-- Giá & Flash Sale -->
+                  {% if product.flash_sale_price and product.flash_sale_end and product.flash_sale_end > now %}
+                      <span class="product-price">
+                          {{ product.flash_sale_price|floatformat:0|intcomma }} ₫
+                      </span>
+                      <div>
+                          <span class="product-old-price">
+                              {{ product.price|floatformat:0|intcomma }} ₫
+                          </span>
+                          <span class="flash-sale">🔥 FLASH SALE 🔥</span>
+                      </div>
+                  {% else %}
+                      <span class="product-price">
+                          {{ product.price|floatformat:0|intcomma }} ₫
+                      </span>
+                  {% endif %}
+
+                <!-- Nút -->
+                <div class="action-buttons">
+                    <button data-product={{product.id}} data-action="add"
+                            class="btn btn-outline-secondary btn-custom update-cart">🛒 Thêm vào giỏ</button>
+                    <a class="btn btn-outline-success btn-custom"
+                       href="{% url 'detail' %}?id={{product.id}}">👁 Xem</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var elements = document.getElementsByClassName("sua-cho-nguoi-gia");
+    for (var i = 0; i < elements.length; i++) {
+      var text = elements[i].innerText;
+      text = text.replace(/-/g, ' ');
+      text = text.replace(/\b\w/g, function(match) {
+        return match.toUpperCase();
+      });
+      elements[i].innerText = text;
+    }
+  });
+</script>
+{% endblock category %}

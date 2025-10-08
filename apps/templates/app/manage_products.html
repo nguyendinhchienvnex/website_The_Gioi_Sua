@@ -1,0 +1,87 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block manage_products %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">🛒 Quản lý sản phẩm</h2>
+
+    <!-- Thêm sản phẩm -->
+    <div class="card mb-4 shadow">
+        <div class="card-body">
+            <h5 class="card-title">➕ Thêm sản phẩm mới</h5>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-success">Thêm sản phẩm</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Danh sách sản phẩm -->
+    <div class="card shadow">
+        <div class="card-body">
+            <h5 class="card-title">📦 Danh sách sản phẩm</h5>
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên</th>
+                        <th>Giá</th>
+                        <th>Tồn kho</th>
+                        <th>Đã bán</th>
+                        <th>Ảnh</th>
+                        <th>Flash Sale</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>{{ product.id }}</td>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.price|floatformat:0 }} ₫</td>
+                        <td>{{ product.stock }}</td>
+                        <td>{{ product.sold }}</td>
+                        <td>
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" width="60" height="60" class="rounded mb-1"><br>
+                            {% else %}
+                                <span class="text-muted">No image</span><br>
+                            {% endif %}
+
+                            <!-- Ảnh phụ -->
+                            {% if product.images.all %}
+                                <div class="d-flex flex-wrap gap-1">
+                                    {% for img in product.images.all|slice:":3" %}
+                                        <img src="{{ img.image.url }}" width="40" height="40" class="rounded border">
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if product.flash_sale_price and product.flash_sale_end %}
+                                <span class="badge bg-danger">
+                                    {{ product.flash_sale_price|floatformat:0 }} ₫ đến {{ product.flash_sale_end|date:"d/m H:i" }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted">Không</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'edit_product' product.id %}" class="btn btn-sm btn-warning">Sửa</a>
+                            <a href="{% url 'delete_product' product.id %}"
+                               class="btn btn-sm btn-danger"
+                               onclick="return confirm('Bạn chắc chắn muốn xóa sản phẩm này?')">
+                               Xóa
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="8" class="text-center text-muted">Chưa có sản phẩm nào</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

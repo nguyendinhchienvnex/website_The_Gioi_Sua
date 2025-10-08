@@ -1,0 +1,523 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <!-- css -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link href="{% static 'app/css/all.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'app/css/owl.carousel.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'app/css/style.css' %}" rel="stylesheet"/>
+    <link href="{% static 'app/css/main.css' %}" rel="stylesheet"/>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+
+
+    <!-- js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+            integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"
+            integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS"
+            crossorigin="anonymous"></script>
+    <script src="{% static 'app/js/all.min.js' %}"></script>
+    <script src="{% static 'app/js/myscript.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="{% static 'app/js/owl.carousel.min.js' %}"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAKlEJcWp5I5a5wE"
+            crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        var user = '{{request.user}}'
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thế Giới Sữa</title>
+</head>
+<style>
+  .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 9999;
+        background-color: #F7462E;
+        color: white;
+
+  }
+
+  .navbar .nav-link {
+  color: #fff !important;
+  font-weight: 600;
+  opacity: .9;
+  transition: all .2s ease;
+  border-bottom: 2px solid transparent;
+}
+.navbar .nav-link:hover {
+  opacity: 1;
+  text-shadow: 0 0 6px rgba(255,255,255,.6);
+  border-bottom-color: rgba(255,255,255,.35);
+}
+.navbar .nav-link.active {
+  opacity: 1;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(255,255,255,.9);
+  border-bottom-color: #ffffff;
+}
+
+.dropdown-menu { border-radius: 10px; overflow: hidden; }
+.dropdown-menu .dropdown-item { transition: background .15s ease, color .15s ease; }
+.dropdown-menu .dropdown-item:hover { background: #32a867; color: #fff; }
+.dropdown-menu .dropdown-item.active { background: #12d32f; color: #fff; font-weight: 700; }
+
+  body {
+       /* width: 1800px;
+        max-width:  calc(100% - 48px);
+        margin: 0 auto;*/
+        padding-top: 80px; /* Đặt giá trị phù hợp với chiều cao của header (80px là ví dụ) */
+        background-color: #ccc;
+  }
+    /* CSS để thêm hiệu ứng phóng to vào ảnh */
+  .navbar-brand {
+      transition: transform 0.3s ease;
+  }
+  .navbar-brand:hover {
+    transform: scale(1.2);
+  }
+  .cart-items-badge {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        width: 20px;
+        height: 20px;
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 12px;
+        font-weight: bold;
+  }
+  .cart-items-count {
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        padding: 5px;
+        font-size: 12px;
+        display: inline-block;
+  }
+  .marquee {
+        overflow: hidden;
+        white-space: nowrap;
+  }
+
+  .marquee-text1 {
+        display: inline-block;
+        font-size: 20px; /* Đổi giá trị font-size tại đây */
+        font-weight: bold;
+        text-decoration: none;
+        color: white;
+        animation: marquee 10s linear infinite; /* Điều chỉnh thời gian và animation theo ý muốn */
+  }
+  @keyframes marquee {
+    0% {
+        transform: translateX(100%); /* Bắt đầu từ phải cùng */
+    }
+    100% {
+        transform: translateX(-100%); /* Kết thúc ở bên trái */
+    }
+  }
+  .full{
+       width: 1276px;
+       max-width: calc(100%);
+       margin: 0 auto;
+
+  }
+  :root {
+    --background-color-light: white;
+    --text-color-light: black;
+    --background-color-dark: black;
+    --text-color-dark: white;
+    --transition-duration: 0.5s;
+    --body-background: var(--background-color-light);
+    --body-color: var(--text-color-light);
+}
+
+body {
+    background-color: var(--body-background);
+    color: var(--body-color);
+    transition: background-color var(--transition-duration), color var(--transition-duration);
+}
+
+.dark-mode {
+    --background-color-light: black;
+    --text-color-light: white;
+    --background-color-dark: white;
+    --text-color-dark: black;
+}
+
+#toggleDarkMode {
+    padding: 10px;
+    background-color: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    background-color: transparent !important;
+}
+#ai-bot-container {
+    position: fixed;
+    bottom: 20px;   /* cách footer 20px */
+    left: 20px;     /* sát bên trái */
+    z-index: 99999; /* luôn nổi trên cùng */
+  }
+/* Hiển thị dropdown khi hover */
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0; /* tránh bị nhảy menu */
+}
+
+/* Thêm hiệu ứng mượt */
+.dropdown-menu {
+    display: none;
+    transition: all 0.2s ease;
+}
+
+</style>
+<body>
+
+<!--<div class="container"><-->
+<!--Header-->
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid"
+         style="background-image: linear-gradient(-90deg, #12d32fff, #32a867ff); color: white; border-radius: 15px;">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <img src="{% static 'images/logo2.png' %} " width="55" height="55">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <!-- Menu bên trái -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a style="color: white" class="nav-link {% if current == 'home' %}active{% endif %}" aria-current="page" href="{% url 'home' %}">Trang chủ</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a style="color: white" class="nav-link dropdown-toggle {% if current == 'product' %}active{% endif %}" href="#" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">Sản phẩm</a>
+                    <ul class="dropdown-menu">
+                        {% for category in categories %}
+                        <li><a class="dropdown-item " href="{% url 'category' %}?category={{category.slug}}">{{category.name}}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a style="color: white" class="nav-link {% if current == 'my_orders' %}active{% endif %}" href="{% url 'my_orders' %}">Đơn hàng</a>
+                </li>
+                <li class="nav-item">
+                    <a style="color: white" class="nav-link {% if current == 'hotline' %}active{% endif %}" href="{% url 'hotline' %}">Liên hệ</a>
+                </li>
+                {% if request.user.is_authenticated and request.user.is_staff %}
+                <li class="nav-item dropdown">
+                    <a style="color: white" class="nav-link dropdown-toggle {% if current == 'manage' %}active{% endif %}" href="#" role="button"
+                    data-bs-toggle="dropdown" aria-expanded="false">Quản lý</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'manage_dashboard' %}">Xem doanh số bán hàng</a></li>
+                            <li><a class="dropdown-item" href="{% url 'manage_products' %}">Thiết kế sản phẩm</a></li>
+                            <li><a class="dropdown-item" href="{% url 'manage_orders' %}">Quản lý đơn hàng</a></li>
+                            <li><a class="dropdown-item" href="{% url 'manage_user' %}">Quản lý tài khoản khách hàng</a></li>
+
+                        </ul>
+                </li>
+                {% endif %}
+                <!-- Nút chuyển đổi chế độ sáng/tối -->
+                <button id="toggleDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </button>
+                <script>
+                    document.getElementById("toggleDarkMode").addEventListener("click", function() {
+                        document.body.classList.toggle("dark-mode");
+                        if (document.body.classList.contains("dark-mode")) {
+                            document.documentElement.style.setProperty('--body-background', 'var(--background-color-dark)');
+                            document.documentElement.style.setProperty('--body-color', 'var(--text-color-dark)');
+                        } else {
+                            document.documentElement.style.setProperty('--body-background', 'var(--background-color-light)');
+                            document.documentElement.style.setProperty('--body-color', 'var(--text-color-light)');
+                        }
+                    });
+                </script>
+            </ul>
+
+            <!-- Ô tìm kiếm -->
+            <form class="d-flex me-3" method="POST" action="{% url 'search' %}">
+                {% csrf_token %}
+                <input class="form-control me-2" name="searched" type="search" placeholder="Bạn tìm gì ...." aria-label="Search">
+                <button style="color: white; white-space: nowrap; border-radius: 5px;" class="btn btn-outline-success" type="submit">Tìm kiếm</button>
+            </form>
+
+            <!-- Nhóm user: Đăng nhập / Đăng ký / Xin chào / Đăng xuất -->
+<div class="d-flex align-items-center me-3">
+    {% if request.user.is_authenticated %}
+        <a class="nav-link" style="margin-left: 15px; text-decoration: none; color: white;" href="{% url 'profile' %}">
+            Hi👋: {{ request.user.username }}
+        </a>
+        <a class="nav-link" style="margin-left: 20px; text-decoration: none; color: white;" href="{% url 'logout' %}">
+            Đăng xuất
+        </a>
+    {% else %}
+        <a class="nav-link" style="color: white; margin-right: 10px" href="{% url 'login' %}">Đăng Nhập</a>
+        <a class="nav-link" style="color: white" href="{% url 'register' %}">Đăng kí</a>
+    {% endif %}
+</div>
+
+
+            <!-- Giỏ hàng -->
+            <div class="form-inline my-2 my-lg-0">
+                <a href="{% url 'cart' %}" style="display: flex; align-items: center; text-decoration: none; color: black;">
+                    <div style="position: relative; margin-right: 5px;">
+                        <img id="cart-icon" src="{% static 'images/cart.png' %}" style="width: 30px; height: 30px;">
+                        <div class="cart-items-badge">{{ cartItems }}</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="full">
+    <!--Giao diện banner -->
+    {% block banner_slider %} {% endblock banner_slider %}
+    <!--Giao diện sản phẩm -->
+    {% block main-content %} {% endblock main-content %}
+    <!-- Giao diện chi tiết sản phẩm -->
+    {% block detail %} {% endblock detail %}
+    <!--Giao dien cart-->
+    {% block cart_content %} {% endblock cart_content %}
+    <!--Giao dien category-->
+    {% block category %} {% endblock category %}
+    <!--Giao dien checkout-->
+    {% block content_checkout %} {% endblock content_checkout %}
+    <!--Giao diện register-->
+    {% block register %} {% endblock register %}
+    {% block change_account %} {% endblock change_account %}
+    <!--Giao diện login-->
+    {% block login %} {% endblock login %}
+    <!-- Giao diện search -->
+    {% block search %} {% endblock search %}
+    <!--Giao diện forgetpassword -->
+    {% block forgetpass %} {% endblock forgetpass %}
+    <!--Giao diện hotline-->
+    {% block hotline %} {% endblock hotline %}
+    <!-- Giao diện thanh toán -->
+    {% block pay %} {% endblock pay %}
+    <!-- Giao diện sidebar -->
+    {% block sidebar %} {% endblock sidebar %}
+    {% block zalo %} {% endblock zalo %}
+    <!--Giao diện thông tin cá nhân -->
+    {% block profile %} {% endblock profile %}
+    <!--Giao diện quản lý dashboard -->
+    {% block manage_dashboard %} {% endblock manage_dashboard %}
+    <!--Giao diện quản lý products -->
+    {% block manage_products %} {% endblock manage_products %}
+    <!--Giao diện xác thực gmail -->
+    {% block verify_otp %}{% endblock verify_otp %}
+    <!--Giao diện quản lý đơn hàng -->
+    {% block manage_orders %}{% endblock manage_orders %}
+    <!--Giao diện đơn hàng của tôi -->
+    {% block my_orders %}{% endblock my_orders %}
+    <!--Giao diện chi tiết đơn hàng -->
+    {% block order_detail %}{% endblock order_detail %}
+    <!--Giao diện đánh giá sản phẩm-->
+    {% block review %}{% endblock review %}
+    <!--Giao diện quản lý người dùng-->
+    {% block manage_user %}{% endblock manage_user %}
+
+
+</div>
+{% if messages %}
+<div id="toast-container" style="position: fixed; top: 80px; right: 20px; z-index: 9999;">
+  {% for message in messages %}
+    <div class="toast-message {{ message.tags }}"
+         style="padding: 12px 20px;
+                border-radius: 8px;
+                font-weight: bold;
+                margin-bottom: 10px;
+                background: #39c97aff;
+                box-shadow: 0 4px 10px rgba(140, 55, 6, 0.77);">
+      {{ message }}
+    </div>
+  {% endfor %}
+</div>
+<script>
+  // Lấy tất cả các thông báo
+  const toasts = document.querySelectorAll('.toast-message');
+
+  toasts.forEach((toast) => {
+    setTimeout(() => {
+      toast.style.transition = "opacity 0.8s ease";
+      toast.style.opacity = "0";
+      setTimeout(() => toast.remove(), 800); // Xóa hẳn khỏi DOM sau khi ẩn
+    }, 5000); // 5 giây
+  });
+</script>
+{% endif %}
+<!--</div><-->
+<!-- Preny AI Bot -->
+{% if request.user.is_authenticated %}
+<div id="ai-bot-container">
+  <script data-name-bot="Thế Giới Sữa AI"
+    src="https://app.preny.ai/embed-global.js"
+    data-button-style="width:300px;height:300px;"
+    data-language="vi"
+    async
+    defer
+    data-preny-bot-id="68d552ed538eafa90b431e2c">
+  </script>
+</div>
+{% endif %}
+<!-- Footer -->
+<footer style="background-color: #011C3A;" class="text-center text-white">
+    <!-- Grid container -->
+    <div class="container p-4 pb-0">
+        <!-- Section: Social media -->
+        <section class="mb-4">
+            <!-- Facebook -->
+            <a class="btn btn-outline-light btn-floating m-1" style="border-radius: 5px;"
+               href="#" role="button"
+            ><i class="fab fa-facebook-f"></i></a>
+            <!-- Youtube -->
+            <a class="btn btn-outline-light btn-floating m-1" style="border-radius: 5px;"
+               href="#" role="button"
+            ><i class="fab fa-youtube"></i></a>
+            <!-- Message -->
+            <a class="btn btn-outline-light btn-floating m-1" style="border-radius: 5px;"
+               href="#" role="button"
+            ><i class="fab fa-facebook-messenger"></i></a>
+            <!-- Google -->
+            <a class="btn btn-outline-light btn-floating m-1" style="border-radius: 5px;"
+               href="#" role="button"
+            ><i class="fab fa-google"></i></a>
+            <!-- Instagram -->
+            <a class="btn btn-outline-light btn-floating m-1" style="border-radius: 5px;"
+               href="#" role="button"
+            ><i class="fab fa-instagram"></i></a>
+            <!-- Github -->
+            <a class="btn btn-outline-light btn-floating m-1" style="border-radius: 5px;"
+               href="#" role="button"
+            ><i class="fab fa-github"></i></a>
+            <!-- Zalo -->
+            <button onclick="show()" id="btnID" type="button" class="btn btn-outline-light btn-floating m-1"
+                    style="border-radius: 5px;">
+                <img src="{% static 'images/zalo3.png' %}" class="d-block w-100" style="width: 20px; height: 25px;"
+                     alt="Zalo">
+            </button>
+
+            <div id="image-popup"
+                 style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center;">
+                <div style="position: relative;">
+                    <img id="image" src="" style="max-width: 60%; max-height: 60vh;">
+                    <button id="close-popup"
+                            style="position: absolute; top: 10px; right: 20px; font-size: 40px; background: none; border: none; color: white;">
+                        &times;
+                    </button>
+                </div>
+            </div>
+            <!-- Xử lí tắt ảnh -->
+            <script>
+        const popupTrigger = document.getElementById('btnID');
+        const popupImage = document.getElementById('image');
+        const imagePopup = document.getElementById('image-popup');
+        const closePopup = document.getElementById('close-popup');
+
+        popupTrigger.addEventListener('click', function() {
+            const originalImageSrc = "{% static 'images/zalo3.png' %}";
+            popupImage.src = originalImageSrc;
+            imagePopup.style.display = 'flex';
+        });
+
+        closePopup.addEventListener('click', function() {
+            imagePopup.style.display = 'none';
+        });
+
+            </script>
+
+        </section>
+        <!-- Section: Social media -->
+    </div>
+    <!-- Grid container -->
+    <!-- Copyright -->
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        <a>Sữa cung cấp protein, canxi và vitamin D. Canxi cần thiết để xây dựng và duy trì hệ xương chắc khỏe, còn vitamin D giúp cơ thể hấp thụ canxi từ thực phẩm. Vì vậy, sữa là loại thực phẩm giúp cải thiện mật độ xương và giảm nguy cơ gãy xương ở người cao tuổi.</a>
+    </div>
+    <!-- Copyright -->
+    <section class="">
+        <form action="">
+            <!--Grid row-->
+            <div class="row d-flex justify-content-center">
+                <!--Grid column-->
+                <div class="col-auto">
+                    <p class="pt-2">
+                        <strong>Đăng ký nhận bản tin</strong>
+                    </p>
+                </div>
+                <!--Grid column-->
+                <div class="col-md-5 col-12">
+                    <!-- Email input -->
+                    <div class="form-outline form-white mb-4">
+                        <input type="email" id="form5Example21" class="form-control"/>
+                        <label class="form-label" for="form5Example21">Địa Chỉ Email</label>
+                    </div>
+                </div>
+                <!--Grid column-->
+                <div class="col-auto">
+                    <!-- Submit button -->
+                    <button type="submit" style="border-radius: 5px; margin-top: 5px;"
+                            class="btn btn-outline-light mb-4">
+                        Đăng ký
+                    </button>
+                </div>
+                <!--Grid column-->
+            </div>
+            <!--Grid row-->
+        </form>
+    </section>
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+
+        <div class="marquee">
+            <a class="marquee-text1">Thế giới sữa. Liên hệ: nguyendinhchienvnex@gmail.com</a>
+        </div>
+    </div>
+    <!-- Footer -->
+</footer>
+<script src="{% static 'app/js/cart.js' %}"></script>
+
+</style>
+</body>
+</html>

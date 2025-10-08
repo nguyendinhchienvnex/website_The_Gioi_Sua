@@ -1,0 +1,108 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block my_orders %}
+<style>
+    .orders-container {
+        margin: 40px auto;
+        max-width: 1100px;
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        padding: 25px;
+        animation: fadeIn 0.6s ease-in-out;
+    }
+    .orders-container h2 {
+        font-weight: 700;
+        color: #2d3436;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .table {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .table thead {
+        background: linear-gradient(45deg, #6a11cb, #2575fc);
+        color: #fff;
+    }
+    .table th {
+        font-weight: 600;
+        text-align: center;
+    }
+    .table td {
+        vertical-align: middle;
+        text-align: center;
+    }
+    .badge {
+        font-size: 0.9rem;
+        padding: 6px 12px;
+        border-radius: 12px;
+    }
+    .btn-sm {
+        border-radius: 20px;
+        padding: 5px 15px;
+        transition: 0.3s;
+    }
+    .btn-sm:hover {
+        transform: scale(1.05);
+    }
+    /* Hiệu ứng fade in */
+    @keyframes fadeIn {
+        from {opacity: 0; transform: translateY(15px);}
+        to {opacity: 1; transform: translateY(0);}
+    }
+    /* Link đơn hàng */
+    .order-link {
+        font-weight: 600;
+        color: #2575fc;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+    .order-link:hover {
+        color: #6a11cb;
+        text-decoration: underline;
+    }
+</style>
+
+<div class="orders-container">
+    <h2>📦 Quản lý đơn hàng</h2>
+
+    {% if orders %}
+    <table class="table table-bordered table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Mã đơn</th>
+          <th>Ngày đặt</th>
+          <th>Trạng thái</th>
+          <th>Tổng tiền</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td>
+            <a href="{% url 'order_detail' order.id %}" class="order-link">
+              #{{ order.id }}
+            </a>
+          </td>
+          <td>{{ order.date_order|date:"d/m/Y H:i" }}</td>
+          <td>
+            <span class="badge bg-{{ order.get_status_badge }}">
+              {{ order.get_status_display }}
+            </span>
+          </td>
+          <td class="fw-bold text-danger">
+            {{ order.get_cart_total|floatformat:0|intcomma }} ₫
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+        <p class="text-center text-muted mt-4">Bạn chưa có đơn hàng nào.</p>
+    {% endif %}
+</div>
+{% endblock %}

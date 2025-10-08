@@ -1,0 +1,230 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block banner_slider %}
+<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" data-bs-wrap="true"
+     style="display: flex; width: 1250px; height:400px;">
+    <div class="carousel-inner" style="border-radius: 15px;">
+        <div class="carousel-item active">
+            <img src="{% static 'app/images/banner/b2.jpg' %}" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item">
+            <img src="{% static 'app/images/banner/b3.jpg' %}" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item">
+            <img src="{% static 'app/images/banner/b4.jpg' %}" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item">
+            <img src="{% static 'app/images/banner/b10.jpg' %}" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item ">
+            <img src="{% static 'app/images/banner/b13.png' %}" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item">
+            <img src="{% static 'app/images/banner/b11.png' %}" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item ">
+            <img src="{% static 'app/images/banner/b1.jpg' %}" class="d-block w-100" alt="...">
+        </div>
+    </div>
+
+    <div class="carousel-inner"
+         style="width: 400px; height:auto; margin-left: 20px; margin-top: 0px; border-radius: 15px; ">
+        <img src="{% static 'app/images/banner/b17.jpg' %}" class="d-block w-100" alt="...">
+        <img src="{% static 'app/images/banner/b15.png' %}" class="d-block w-100" style="margin-top:5px;" alt="...">
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+<script>
+  // Lấy carousel
+  var carousel = new bootstrap.Carousel(document.getElementById('carouselExampleControls'), {
+    interval: 2000, // Thời gian chuyển ảnh (đơn vị: mili giây)
+    wrap: true, // Chạy lặp lại các ảnh
+  });
+
+</script>
+{% endblock banner_slider %}
+
+
+{% block main-content %}
+{% load humanize %}
+<style>
+    .div-container {
+        margin: 20px;
+        padding: 15px;
+        border-radius: 25px;
+        background: linear-gradient(135deg, #f8f9fa, #ffffff);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .div-container .sp-text {
+        margin-top: 10px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        color: #444;
+    }
+    .div-container .sp-container {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+        justify-content: space-evenly;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    .sp-container .sp {
+        width: 22%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: black;
+        text-align: center;
+    }
+
+    /* Card sản phẩm */
+    .product-card {
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        padding: 15px;
+        margin-bottom: 25px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-align: center;
+        position: relative;
+    }
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    .thubnail {
+        border-radius: 12px;
+        transition: transform 0.3s ease;
+        max-width: 100%;
+        max-height: 200px;
+        object-fit: cover;
+        object-position: center;
+    }
+    .thubnail:hover {
+        transform: scale(1.05);
+    }
+    .product-name {
+        font-size: 16px;
+        font-weight: 600;
+        margin-top: 12px;
+        color: #333;
+    }
+    .product-price {
+        font-size: 18px;
+        font-weight: bold;
+        color: #e63946;
+        display: block;
+        margin: 8px 0 5px 0;
+    }
+    .product-old-price {
+        font-size: 14px;
+        color: #888;
+        text-decoration: line-through;
+        margin-right: 8px;
+    }
+    .flash-sale {
+        display: inline-block;
+        background: linear-gradient(45deg, #ff512f, #dd2476);
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 4px 12px;
+        border-radius: 15px;
+        margin-top: 5px;
+        animation: flash 1s infinite alternate;
+    }
+    @keyframes flash {
+        from { opacity: 1; transform: scale(1);}
+        to { opacity: 0.7; transform: scale(1.1);}
+    }
+    .btn-custom {
+        border-radius: 25px;
+        font-size: 14px;
+        padding: 6px 15px;
+        transition: 0.3s;
+        margin: 3px;
+    }
+    .btn-custom:hover {
+        transform: scale(1.05);
+    }
+    .action-buttons {
+        margin-top: 12px;
+    }
+</style>
+
+<div class="div-container">
+    <div class="sp-text">THẾ GIỚI SỮA - SỐ 1 CHẤT LƯỢNG & HẬU MÃI</div>
+    <div class="sp-container">
+        <div class="sp">
+            <img src="{% static 'app/images/banner/a1.png' %}">
+            <span>Miễn phí vận chuyển</span>
+        </div>
+        <div class="sp">
+            <img src="{% static 'app/images/banner/a2.png' %}">
+            <span>Bảo hành chính hãng</span>
+        </div>
+        <div class="sp">
+            <img src="{% static 'app/images/banner/a3.png' %}">
+            <span>Quà tặng khi mua sản phẩm</span>
+        </div>
+        <div class="sp">
+            <img src="{% static 'app/images/banner/a4.png' %}">
+            <span>Tích điểm khách hàng thân thiết</span>
+        </div>
+    </div>
+</div>
+
+<!-- Danh sách sản phẩm -->
+<div class="row" style="width:100%">
+    {% for product in products %}
+    <div class="col-lg-3 col-md-4 col-sm-6">
+        <div class="product-card">
+            <img class="thubnail" src="{{product.ImageURL}}" height="200">
+            <div class="product-info">
+
+                <!-- Tên -->
+                <div class="product-name">{{product.name}}</div>
+
+                <!-- Giá & Flash Sale -->
+                {% if product.flash_sale_price and product.flash_sale_end and product.flash_sale_end > now %}
+                    <span class="product-price">
+                        {{ product.flash_sale_price|floatformat:0|intcomma }} ₫
+                    </span>
+                    <div>
+                        <span class="product-old-price">
+                            {{ product.price|floatformat:0|intcomma }} ₫
+                        </span>
+                        <span class="flash-sale">🔥 FLASH SALE 🔥</span>
+                    </div>
+                {% else %}
+                    <span class="product-price">
+                        {{ product.price|floatformat:0|intcomma }} ₫
+                    </span>
+                {% endif %}
+
+
+                <!-- Nút -->
+                <div class="action-buttons">
+                    <button data-product={{product.id}} data-action="add"
+                            class="btn btn-outline-secondary btn-custom update-cart">🛒 Thêm vào giỏ</button>
+                    <a class="btn btn-outline-success btn-custom"
+                       href="{% url 'detail' %}?id={{product.id}}">👁 Xem</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<br/><br/><br/>
+{% endblock main-content %}
