@@ -1,0 +1,28 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block review %}
+<div class="container mt-5">
+<h3>Đánh giá đơn hàng #{{ order.id }}</h3>
+<form method="post">
+  {% csrf_token %}
+  {% for item, form in forms %}
+    <div class="card mb-3">
+      <div class="card-header">
+        {{ item.product.name }}
+      </div>
+      <div class="card-body">
+        <div class="mb-2">
+          {{ form.rating.label_tag }} {{ form.rating }}
+        </div>
+        <div class="mb-2">
+          {{ form.comment.label_tag }} {{ form.comment }}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+  <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+</form>
+
+</div>
+{% endblock %}

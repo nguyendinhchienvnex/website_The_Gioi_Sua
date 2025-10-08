@@ -1,0 +1,198 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block detail %}
+
+{% if product %}
+<br/>
+<div class="container mt-5 mb-5">
+  <div class="row d-flex justify-content-center">
+    <div class="col-md-10">
+      <div class="card">
+        <div class="row">
+          <!-- Hình ảnh -->
+          <div class="col-md-6">
+            <div class="images p-3">
+              <div class="text-center p-4">
+                <img id="main-image" src="{{ product.ImageURL }}" width="350"/>
+              </div>
+              <div class="d-flex overflow-auto mt-3" style="max-width: 100%;">
+                {% for img in product.images.all|slice:":6" %}
+                  <div class="me-2">
+                    <img src="{{ img.image.url }}" width="60" height="60"
+                         class="img-thumbnail thumb-img"
+                         style="cursor:pointer;"
+                         onclick="document.getElementById('main-image').src=this.src;">
+                  </div>
+                {% empty %}{% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Thông tin sản phẩm -->
+          <div class="col-md-6">
+            <div class="product p-4">
+
+              <!-- Quay lại -->
+              <div class="d-flex justify-content-between align-items-center">
+                <a href="{% url 'home' %}" class="text-decoration-none">&#x2190; Trở lại</a>
+                <i class="fa fa-shopping-cart text-muted"></i>
+              </div>
+
+              <!-- Tên -->
+              <h4 class="text-uppercase mt-3">{{ product.name }}</h4>
+
+              <!-- Flash sale -->
+              {% if product.flash_sale_end and product.flash_sale_end > now %}
+                <div class="mb-2">
+                  <span class="badge bg-danger">FLASH SALE</span>
+                  <span id="price-display" class="ms-2 fs-4 text-danger fw-bold">
+                    {{ product.flash_sale_price|floatformat:0|intcomma }} ₫
+                  </span>
+                  <span id="old-price" class="ms-2 text-muted text-decoration-line-through">
+                    {{ product.price|floatformat:0|intcomma }} ₫
+                  </span>
+                  <div id="countdown-{{ product.id }}" class="text-danger fw-bold small"></div>
+                </div>
+              {% else %}
+                <div class="price d-flex flex-row align-items-center mb-2">
+                  <span id="price-display" class="act-price">
+                    Giá: {{ product.price|floatformat:0|intcomma }} ₫
+                  </span>
+                </div>
+              {% endif %}
+
+              <!-- Đánh giá -->
+              <div class="mb-2">
+                ⭐ {{ product.avg_rating|floatformat:1 }}/5
+                ({{ product.review_count }} lượt đánh giá)
+              </div>
+
+              <!-- Đã bán / còn -->
+              <div class="mb-2 text-muted">
+                Đã bán: {{ product.sold_count }} | Còn: {{ product.remaining_stock }}
+              </div>
+
+              <!-- Vận chuyển -->
+              <div class="mb-2">
+                🚚 Giao dự kiến: {{ shipping_estimate }}
+              </div>
+
+              <!-- Chi tiết -->
+              <p class="about">{{ product.detail }}</p>
+
+              <!-- Chọn đơn vị -->
+              <div class="mb-2">
+                <label>Đơn vị: </label>
+                <select id="unit-select" class="form-select w-auto d-inline">
+                  <option value="piece" selected>Hộp</option>
+                  <option value="box">Thùng (30 hộp)</option>
+                </select>
+              </div>
+
+              <!-- Số lượng -->
+              <div class="d-flex mb-3">
+                <label class="me-2">Số lượng: </label>
+                <input id="quantity-input" type="number" value="1" min="1" max="{{ product.stock }}" class="form-control w-25">
+              </div>
+
+              <!-- Hành động -->
+              <div class="cart mt-4 align-items-center">
+                <!-- Thêm vào giỏ hàng -->
+                <button id="add-to-cart-btn"
+                        class="btn btn-danger text-uppercase px-4 add-btn update-cart"
+                        data-product="{{ product.id }}"
+                        data-action="add"
+                        style="border-radius: 5px;">
+                  Thêm vào giỏ hàng
+                </button>
+
+                <!-- Mua ngay -->
+                <a href="{% url 'checkout' %}"
+                   class="btn btn-success text-uppercase px-4 ms-2"
+                   style="border-radius: 5px;">Mua ngay</a>
+
+                <!-- Icon yêu thích -->
+                <i class="fa fa-heart text-muted ms-3"></i>
+
+                <!-- Tố cáo -->
+                <a href="{% url 'report_product' product.id %}" class="ms-3 text-danger" title="Tố cáo sản phẩm">
+                  <i class="fa fa-exclamation-triangle"></i>
+                </a>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<p class="text-center mt-5">Sản phẩm không tồn tại.</p>
+{% endif %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // ====== FLASH SALE COUNTDOWN ======
+  {% if product and product.flash_sale_end %}
+    var countDownDate{{ product.id }} = new Date("{{ product.flash_sale_end|date:'Y-m-d H:i:s' }}").getTime();
+    var countdownEl = document.getElementById("countdown-{{ product.id }}");
+
+    var x{{ product.id }} = setInterval(function () {
+      var now = new Date().getTime();
+      var distance = countDownDate{{ product.id }} - now;
+
+      if (distance < 0) {
+        clearInterval(x{{ product.id }});
+        if (countdownEl) countdownEl.innerHTML = "Hết hạn!";
+      } else {
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        if (countdownEl) {
+          countdownEl.innerHTML = "Kết thúc trong " + hours + "h " + minutes + "m " + seconds + "s";
+        }
+      }
+    }, 1000);
+  {% endif %}
+
+  // ====== Cập nhật giá khi đổi đơn vị ======
+  const unitSelect = document.getElementById("unit-select");
+  const priceDisplay = document.getElementById("price-display");
+  const oldPrice = document.getElementById("old-price");
+
+  const basePrice = {{ product.price|floatformat:0 }};
+  const flashPrice = {{ product.flash_sale_price|default:0|floatformat:0 }};
+  const isFlash = {% if product.is_flash_sale %}true{% else %}false{% endif %};
+
+  function updatePrice() {
+    let finalPrice, oldBase;
+    if (unitSelect && unitSelect.value === "box") {
+      finalPrice = isFlash && flashPrice > 0 ? flashPrice * 30 : basePrice * 30;
+      oldBase = basePrice * 30;
+    } else {
+      finalPrice = isFlash && flashPrice > 0 ? flashPrice : basePrice;
+      oldBase = basePrice;
+    }
+
+    if (priceDisplay) {
+      priceDisplay.textContent = new Intl.NumberFormat("vi-VN").format(finalPrice) + " ₫";
+    }
+    if (oldPrice) {
+      oldPrice.textContent = new Intl.NumberFormat("vi-VN").format(oldBase) + " ₫";
+    }
+  }
+  if (unitSelect) {
+    unitSelect.addEventListener("change", updatePrice);
+    updatePrice();
+  }
+
+  // ====== Gắn unit & quantity trước khi gửi sang cart.js ======
+  const addBtn = document.getElementById("add-to-cart-btn");
+  const quantityInput = document.getElementById("quantity-input");
+});
+</script>
+
+{% endblock detail %}

@@ -1,0 +1,59 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block my_orders %}
+<div class="container mt-4">
+  <h2 class="mb-4">Đơn hàng của tôi</h2>
+  <table class="table table-bordered table-hover align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Ngày đặt</th>
+        <th>Trạng thái</th>
+        <th>Tổng tiền</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if orders %}
+        {% for order in orders %}
+        <tr>
+          <td>
+            <!-- Bấm ID để xem chi tiết -->
+            <a href="{% url 'order_detail' order.id %}" class="text-decoration-none fw-bold">
+              #{{ order.id }}
+            </a>
+          </td>
+          <td>{{ order.date_order|date:"d/m/Y H:i" }}</td>
+          <td>
+            <span class="badge bg-{{ order.get_status_badge }}">
+              {{ order.get_status_display }}
+            </span>
+          </td>
+          <td>{{ order.get_cart_total|floatformat:0|intcomma }} ₫</td>
+          <td>
+            {% if order.status == "delivered" %}
+              <a href="{% url 'confirm_received' order.id %}" class="btn btn-success btn-sm">
+                Xác nhận đã nhận
+              </a>
+            {% endif %}
+            {% if order.status == "completed" %}
+              <a href="{% url 'review_product' order.id %}" class="btn btn-primary btn-sm">
+                Đánh giá
+              </a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="5" class="text-center text-muted">
+            Bạn chưa có đơn hàng nào.
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

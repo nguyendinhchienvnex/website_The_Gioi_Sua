@@ -1,0 +1,19 @@
+{% extends "app/base.html" %}
+{% load static %}
+
+{% block main-content %}
+<div class="container mt-4">
+    <h2 class="mb-4">✏️ Sửa sản phẩm: {{ product.name }}</h2>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                <a href="{% url 'manage_products' %}" class="btn btn-secondary">Quay lại</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

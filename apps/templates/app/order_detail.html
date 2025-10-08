@@ -1,0 +1,187 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% load humanize %}
+{% block order_detail %}
+
+<div class="container my-5">
+  <div class="card shadow-lg border-0 rounded-4 p-4">
+    <h3 class="text-center fw-bold text-primary mb-4">
+      📦 Chi tiết đơn hàng #{{ order.id }}
+    </h3>
+
+    <!-- Thông tin đơn hàng -->
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <p><strong>Ngày đặt:</strong> {{ order.date_order|date:"d/m/Y H:i" }}</p>
+        <p><strong>Trạng thái:</strong>
+          <span class="badge bg-{{ order.get_status_badge }}">
+            {{ order.get_status_display }}
+          </span>
+        </p>
+        <p><strong>Tổng tiền:</strong>
+          <span class="text-danger fw-bold">
+            {{ order.get_cart_total|floatformat:0|intcomma }} ₫
+          </span>
+        </p>
+      </div>
+
+      {% if user.is_staff %}
+      <div class="col-md-6">
+        <p><strong>Khách hàng:</strong> {{ order.customer.username }}</p>
+        <p><strong>Email:</strong> {{ order.customer.email }}</p>
+        <p><strong>Cập nhật gần nhất:</strong> {{ order.updated_at|date:"d/m/Y H:i" }}</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Timeline trạng thái -->
+    <ul class="timeline mb-5">
+      <li class="{% if order.status in 'confirmed shipping delivered completed' %}active{% endif %}">
+        📦 <span>Đã xác nhận</span>
+      </li>
+      <li class="{% if order.status in 'shipping delivered completed' %}active{% endif %}">
+        🚚 <span>Đang giao hàng</span>
+      </li>
+      <li class="{% if order.status in 'delivered completed' %}active{% endif %}">
+        ✅ <span>Đã giao thành công</span>
+      </li>
+      <li class="{% if order.status == 'completed' %}active{% endif %}">
+        🙌 <span>Hoàn tất</span>
+      </li>
+      <li class="{% if order.status == 'cancelled' %}cancelled{% endif %}">
+        ❌ <span>Đã hủy</span>
+      </li>
+    </ul>
+
+    <!-- Sản phẩm -->
+    <h5 class="fw-bold mb-3">🛍 Sản phẩm trong đơn</h5>
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Hình ảnh</th>
+          <th>Sản phẩm</th>
+          <th>Số lượng</th>
+          <th>Giá</th>
+          <th>Tổng</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>
+            <img src="{{ item.product.ImageURL }}" alt="{{ item.product.name }}"
+                 style="width:60px;height:60px;object-fit:cover;border-radius:8px;">
+          </td>
+          <td>{{ item.product.name }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.product.price|floatformat:0|intcomma }} ₫</td>
+          <td class="fw-bold text-danger">{{ item.get_total|floatformat:0|intcomma }} ₫</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Nút hành động -->
+    <div class="mt-4 text-center">
+      {% if user.is_staff %}
+        {# ADMIN: Giữ nguyên các nút quản lý trạng thái #}
+        {% if order.status == "confirmed" %}
+          <a href="{% url 'update_order_status' order.id 'shipping' %}" class="btn btn-primary">🚚 Bắt đầu giao</a>
+        {% endif %}
+        {% if order.status == "shipping" %}
+          <a href="{% url 'update_order_status' order.id 'delivered' %}" class="btn btn-success">📦 Đã giao</a>
+        {% endif %}
+        {% if order.status not in "completed cancelled" %}
+          <a href="{% url 'update_order_status' order.id 'cancelled' %}" class="btn btn-danger">❌ Hủy đơn</a>
+        {% endif %}
+      {% else %}
+        {# USER: chỉ có xác nhận nhận hàng hoặc hủy với lý do #}
+        {% if user == order.customer and order.status == "delivered" %}
+          <a href="{% url 'confirm_received' order.id %}" class="btn btn-success">🙌 Xác nhận đã nhận</a>
+        {% endif %}
+
+        {% if user == order.customer and order.status not in "completed cancelled" %}
+          <!-- Nút mở modal lý do hủy -->
+          <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelReasonModal">
+            ❌ Hủy đơn
+          </button>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Modal chọn lý do hủy (chỉ hiện cho user) -->
+<div class="modal fade" id="cancelReasonModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="post" action="{% url 'cancel_order' order.id %}">
+      {% csrf_token %}
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Lý do hủy đơn hàng</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <select name="reason" class="form-select" required>
+            <option value="">-- Chọn lý do --</option>
+            <option value="wrong_order">Đặt nhầm sản phẩm</option>
+            <option value="not_needed">Không cần nữa</option>
+            <option value="found_cheaper">Tìm được chỗ rẻ hơn</option>
+            <option value="other">Khác</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Xác nhận hủy</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  /* Timeline */
+  .timeline {
+    list-style:none;
+    display:flex;
+    justify-content:space-between;
+    padding:0;
+    margin:30px 0;
+    position:relative;
+  }
+  .timeline::before {
+    content:'';
+    position:absolute;
+    top:20px;
+    left:0;
+    right:0;
+    height:4px;
+    background:#e0e0e0;
+    z-index:0;
+  }
+  .timeline li {
+    text-align:center;
+    position:relative;
+    flex:1;
+    font-size:14px;
+    color:#888;
+  }
+  .timeline li span { display:block; margin-top:8px; }
+  .timeline li.active { color:#2ecc71; font-weight:700; }
+  .timeline li.active::after {
+    background:#2ecc71;
+    border:3px solid #27ae60;
+  }
+  .timeline li.cancelled { color:#e74c3c; font-weight:700; }
+  .timeline li::after {
+    content:'';
+    width:20px;height:20px;
+    background:#ccc;
+    border-radius:50%;
+    position:absolute;
+    top:10px;left:50%;
+    transform:translateX(-50%);
+    z-index:1;
+  }
+</style>
+{% endblock %}

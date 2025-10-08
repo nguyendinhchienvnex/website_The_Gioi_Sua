@@ -1,0 +1,75 @@
+{% extends "app/base.html" %}
+{% block verify_otp %}
+<style>
+    .otp-card {
+        max-width: 450px;
+        margin: 80px auto;
+        padding: 30px;
+        border-radius: 15px;
+        background: #ffffff;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+    .otp-card:hover {
+        transform: translateY(-5px);
+    }
+    .otp-card h2 {
+        font-weight: 700;
+        color: #32a867;
+        margin-bottom: 20px;
+    }
+    .otp-card p.error {
+        color: red;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+    .otp-input {
+        letter-spacing: 5px;
+        text-align: center;
+        font-size: 22px;
+        font-weight: bold;
+        border-radius: 10px;
+        border: 2px solid #32a867;
+        padding: 10px;
+        width: 100%;
+        transition: all .2s ease;
+    }
+    .otp-input:focus {
+        outline: none;
+        border-color: #12d32f;
+        box-shadow: 0 0 8px rgba(18,211,47,0.5);
+    }
+    .btn-otp {
+        margin-top: 20px;
+        background: linear-gradient(90deg, #12d32f, #32a867);
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        padding: 12px 30px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+    .btn-otp:hover {
+        background: linear-gradient(90deg, #32a867, #12d32f);
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+</style>
+
+<div class="otp-card">
+    <h2>🔑 Xác thực OTP</h2>
+    <p>Chúng tôi đã gửi mã OTP đến email của bạn.<br>Vui lòng nhập mã để hoàn tất đăng ký.</p>
+
+    {% if error %}
+      <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="otp" maxlength="6" class="otp-input" placeholder="••••••" required>
+        <button type="submit" class="btn-otp">✅ Xác nhận</button>
+    </form>
+</div>
+{% endblock verify_otp %}

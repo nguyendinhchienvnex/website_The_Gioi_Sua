@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #1a202c;
+            color: white;
+            padding: 20px;
+        }
+        .sidebar h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .sidebar ul {
+            list-style-type: none;
+        }
+        .sidebar li {
+            padding: 10px 0;
+            cursor: pointer;
+        }
+        .sidebar li:hover {
+            background-color: #2d3748;
+        }
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background-color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        .user-info img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+            background-color: #f7fafc;
+            overflow-y: auto;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #4299e1;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #edf2f7;
+            color: #4a5568;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th {
+            background-color: #f7fafc;
+            font-weight: bold;
+            color: #4a5568;
+        }
+        .status {
+            padding: 4px 8px;
+            border-radius: 9999px;
+            background-color: #c6f6d5;
+            color: #2f855a;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h1>S</h1>
+        <ul>
+            <li data-info="Thông tin trang chủ">Trang chủ</li>
+            <li data-info="Thông tin quản lý danh mục" id="manage-categories">Quản lý danh mục</li>
+            <li data-info="Thông tin quản lý sản phẩm" id="manage-products">Quản lý sản phẩm</li>
+<!--            <li data-info="Thông tin quản lý đơn hàng" id="manage-cart">Quản lý gio hàng</li>-->
+            <li data-info="Thông tin quản lý tài khoản" id="manage-accounts">Quản lý tài khoản</li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="header">
+            <h1>Dashboard</h1>
+            <div class="user-info">
+                <img src="user-avatar.png" alt="User Avatar">
+                <span>Phi Hong Son</span>
+            </div>
+        </div>
+        <div class="content">
+            <div id="info-display" class="card">
+                <p>Chọn một mục từ danh sách bên trái để xem thông tin chi tiết.</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.querySelectorAll('.sidebar li').forEach(item => {
+    item.addEventListener('click', async event => {
+        const infoDisplay = document.getElementById('info-display');
+        const itemId = item.id;
+
+        try {
+            if (itemId === 'manage-accounts') {
+                // Lấy dữ liệu từ API để hiển thị danh sách tài khoản
+                const response = await fetch('http://127.0.0.1:8000/register_api');
+                const data = await response.json();
+                const users = data.users;
+
+                let tableContent = '<h2>Danh sách tài khoản</h2>';
+                tableContent += `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                users.forEach(user => {
+                    tableContent += `
+                        <tr>
+                            <td>${user.id}</td>
+                            <td>${user.username}</td>
+                            <td>${user.email}</td>
+                        </tr>
+                    `;
+                });
+
+                tableContent += `
+                        </tbody>
+                    </table>
+                `;
+                infoDisplay.innerHTML = tableContent;
+            }  else if (itemId === 'manage-cart') {
+                // Lấy danh sách người dùng từ API
+                const userResponse = await fetch('http://127.0.0.1:8000/register_api');
+                const userData = await userResponse.json();
+                const users = userData.users;
+
+                let tableContent = '<h2>Danh sách người dùng</h2>';
+                tableContent += `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                users.forEach(user => {
+                    tableContent += `
+                        <tr>
+                            <td><a href="#" data-id="${user.id}" class="user-id">${user.id}</a></td>
+                            <td>${user.username}</td>
+                        </tr>
+                    `;
+                });
+
+                tableContent += `
+                        </tbody>
+                    </table>
+                `;
+                infoDisplay.innerHTML = tableContent;
+
+                // Thêm sự kiện click cho các ID người dùng
+                document.querySelectorAll('.user-id').forEach(userIdElement => {
+                    userIdElement.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        const userId = e.target.getAttribute('data-id');
+                        try {
+                            // Lấy thông tin giỏ hàng từ API
+                            const cartResponse = await fetch(`http://127.0.0.1:8000/cart_api/${userId}`);
+                            const cartData = await cartResponse.json();
+
+                            let cartContent = '<h2>Danh sách giỏ hàng</h2>';
+                            cartContent += `
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Quantity</th>
+                                            <th>Price</th>
+                                            <th>Total Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                            `;
+
+                            cartData.product.forEach(item => {
+                                cartContent += `
+                                    <tr>
+                                        <td>${item.id}</td>
+                                        <td>${item.name}</td>
+                                        <td>${item.quantity}</td>
+                                        <td>${item.price}</td>
+                                        <td>${item.total_price}</td>
+                                    </tr>
+                                `;
+                            });
+
+                            cartContent += `
+                                    <tr>
+                                        <td colspan="4"><strong>Tổng tiền</strong></td>
+                                        <td>${cartData.total_price_all}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            `;
+                            infoDisplay.innerHTML = cartContent;
+                        } catch (error) {
+                            infoDisplay.innerHTML = `<p>Không thể tải dữ liệu giỏ hàng. Vui lòng thử lại sau.</p>`;
+                            console.error('Lỗi khi lấy dữ liệu giỏ hàng:', error);
+                        }
+                    });
+                });
+            } else {
+                // Hiển thị thông tin chung
+                const info = item.getAttribute('data-info');
+                infoDisplay.innerHTML = `<p>${info}</p>`;
+            }
+        } catch (error) {
+            infoDisplay.innerHTML = `<p>Không thể tải dữ liệu. Vui lòng thử lại sau.</p>`;
+            console.error('Lỗi:', error);
+        }
+    });
+});
+document.querySelectorAll('.sidebar li').forEach(item => {
+    item.addEventListener('click', async event => {
+        const infoDisplay = document.getElementById('info-display');
+        const itemId = item.id;
+
+        try {
+            if (itemId === 'manage-products') {
+                // Gọi API để lấy danh sách sản phẩm
+                const response = await fetch('http://127.0.0.1:8000/product_api');
+                const data = await response.json();
+
+                let tableContent = '<h2>Danh sách sản phẩm</h2>';
+                tableContent += `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Giá</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                data.forEach(product => {
+                    tableContent += `
+                        <tr>
+                            <td>${product.id}</td>
+                            <td>${product.name}</td>
+                            <td>${product.price.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+
+                tableContent += `
+                        </tbody>
+                    </table>
+                `;
+                infoDisplay.innerHTML = tableContent;
+            } else {
+                // Hiển thị thông tin chung
+                const info = item.getAttribute('data-info');
+                infoDisplay.innerHTML = `<p>${info}</p>`;
+            }
+        } catch (error) {
+            infoDisplay.innerHTML = `<p>Không thể tải dữ liệu. Vui lòng thử lại sau.</p>`;
+            console.error('Lỗi:', error);
+        }
+    });
+});
+
+document.querySelectorAll('.sidebar li').forEach(item => {
+    item.addEventListener('click', async event => {
+        const infoDisplay = document.getElementById('info-display');
+        const itemId = item.id;
+
+        try {
+            if (itemId === 'manage-categories') {
+                // Gọi API để lấy danh sách danh mục
+                const response = await fetch('http://127.0.0.1:8000/category_api/');
+                const data = await response.json();
+
+                let tableContent = '<h2>Danh sách danh mục</h2>';
+                tableContent += `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên danh mục</th>
+                                <th>Slug</th>
+                                <th>Danh mục con</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                // Duyệt qua từng danh mục và tạo hàng trong bảng
+                data.forEach(category => {
+                    tableContent += `
+                        <tr>
+                            <td>${category.id}</td>
+                            <td>${category.name}</td>
+                            <td>${category.slug}</td>
+                            <td>${category.is_sub ? 'Có' : 'Không'}</td>
+                        </tr>
+                    `;
+                });
+
+                tableContent += `
+                        </tbody>
+                    </table>
+                `;
+                infoDisplay.innerHTML = tableContent;
+            } else {
+                // Hiển thị thông tin chung
+                const info = item.getAttribute('data-info');
+                infoDisplay.innerHTML = `<p>${info}</p>`;
+            }
+        } catch (error) {
+            infoDisplay.innerHTML = `<p>Không thể tải dữ liệu danh mục. Vui lòng thử lại sau.</p>`;
+            console.error('Lỗi khi lấy dữ liệu danh mục:', error);
+        }
+    });
+});
+
+
+    </script>
+</body>
+</html>
